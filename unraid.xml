@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>lantern</Name>
+  <Repository>ghcr.io/sjcobs/lantern:latest</Repository>
+  <Registry>https://ghcr.io/</Registry>
+  <Network>bridge</Network>
+  <Privileged>false</Privileged>
+  <Config Name="Token" Target="OP_SERVICE_ACCOUNT_TOKEN" Default="" Mode="" Description="" Type="Variable" Display="always" Required="true" Mask="true"/>
+</Container>
