@@ -11,5 +11,5 @@
   <Config Name="Run token" Target="RUN_TOKEN" Default="" Mode="" Description="Bearer token for POST /run" Type="Variable" Display="always" Required="true" Mask="true"/>
   <Config Name="Vault title" Target="VAULT_TITLE" Default="Lantern" Mode="" Description="" Type="Variable" Display="always" Required="false" Mask="false"/>
   <Config Name="Inactive after days" Target="INACTIVE_AFTER_DAYS" Default="30" Mode="" Description="7-365" Type="Variable" Display="always" Required="false" Mask="false"/>
-  <Config Name="Test days" Target="TEST_DAYS" Default="" Mode="" Description="Fake idle days for every member. Leave empty. 27=warn 30=trip" Type="Variable" Display="always" Required="false" Mask="false"/>
+  <Config Name="Test day" Target="TEST_DAY" Default="" Mode="" Description="Fake idle days for every member. Leave empty. 27=warn 30=trip" Type="Variable" Display="always" Required="false" Mask="false"/>
 </Container>

@@ -22,15 +22,15 @@ if (!Number.isInteger(inactiveAfterDays) || inactiveAfterDays < 7 || inactiveAft
   throw new Error("INACTIVE_AFTER_DAYS must be 7-365");
 }
 
-export const testDays = process.env.TEST_DAYS === undefined || process.env.TEST_DAYS === ""
+export const testDay = process.env.TEST_DAY === undefined || process.env.TEST_DAY === ""
   ? undefined
-  : Number(process.env.TEST_DAYS);
-if (testDays !== undefined && (!Number.isInteger(testDays) || testDays < 0)) {
-  throw new Error("TEST_DAYS must be an integer >= 0");
+  : Number(process.env.TEST_DAY);
+if (testDay !== undefined && (!Number.isInteger(testDay) || testDay < 0)) {
+  throw new Error("TEST_DAY must be an integer >= 0");
 }
 
 export function daysSinceAuth(user: User) {
-  if (testDays !== undefined) return testDays;
+  if (testDay !== undefined) return testDay;
   const now = Date.now();
   const lastAuth = user.last_auth_at ? new Date(user.last_auth_at).getTime() : now;
   const msPerDay = 86_400_000;

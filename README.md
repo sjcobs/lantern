@@ -34,10 +34,10 @@ curl.exe http://localhost:6346/
 curl.exe -X POST http://localhost:6346/run -H "Authorization: Bearer a-long-random-string"
 ```
 
-To test warn or trip without waiting, set `TEST_DAYS`. It pretends every member has been idle that many days. Put a dummy item in **your** Lantern only. `27` warns (3 days left). `30` trips anyone who has items. Leave it empty when you are done. On Unraid, apply the new template (or add the variable), restart the container, then clear it.
+To test warn or trip without waiting, set `TEST_DAY`. It pretends every member has been idle that many days. Put a dummy item in **your** Lantern only. `27` warns (3 days left). `30` trips anyone who has items. Leave it empty when you are done. On Unraid, apply the new template (or add the variable), restart the container, then clear it.
 
 ```powershell
-$Env:TEST_DAYS = "27"
+$Env:TEST_DAY = "27"
 npm start
 ```
 
@@ -49,7 +49,7 @@ npm start
 | `RUN_TOKEN`                | required     |
 | `VAULT_TITLE`              | `Lantern`    |
 | `INACTIVE_AFTER_DAYS`      | `30` (7-365) |
-| `TEST_DAYS`                | empty (off)  |
+| `TEST_DAY`                 | empty (off)  |
 | `PORT`                     | `6346`       |
 
 ## Limits
@@ -59,3 +59,13 @@ Lantern does not replace 1Password family admins. An admin can delete anyone's L
 ## Disclaimer
 
 Use at your own risk. This is not a will, a backup, or an official 1Password product. Test it yourself, keep your own copies of anything that matters, and do not rely on it as your only plan. You are responsible for the token, the schedule, and what happens when a vault trips.
+
+## Support
+
+[![Sponsor sjcobs](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/sjcobs)
+
+[![Buy me a coffee](https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20coffee&slug=sjcobs&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff)](https://buymeacoffee.com/sjcobs)
+
+Bitcoin: `bc1qzjrleryk7pmyyhw9xpg9dysvygztstk8u7qehn`
+
+<img src="btc.png" alt="Bitcoin QR" width="160" />
