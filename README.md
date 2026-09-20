@@ -2,7 +2,16 @@
 
 Lantern watches your light. Go dark too long, and it passes your chosen secrets to family members automatically, inside 1Password.
 
-It works by using a 1Password service account token with **Create vaults** access only; it should not have access to your other vaults. Each `POST /run` creates a special vault for every family member if they do not already have one (default title `Lantern`). The clock is 1Password login time (`last_auth_at`), not a timer this app stores. For the last 3 days before a trip, the payload lists them under `warnings`. If they are overdue and that vault has items, Lantern grants **view-only** access to every family member, renames it to `Lantern` plus their first name, and creates a new empty vault for the inactive person. That lands under `trips`. Empty vaults are left alone. The opened vault is an archive. The new Lantern still allows editing.
+It works by using a 1Password service account token with **Create vaults** access only; it should not have access to your other vaults. Each `POST /run` creates a special vault for every family member if they do not already have one (default title `Lantern`). The clock is 1Password login time (`last_auth_at`), not a timer this app stores. If they are overdue and that vault has items, Lantern grants **view-only** access to every family member, renames it to `Lantern` plus their first name, and creates a new empty vault for the inactive person. Empty vaults are left alone. The opened vault is an archive. The new Lantern still allows editing.
+
+`POST /run` returns a JSON array. Each item has `kind` of `warn` or `trip`, plus `email` and `name`. Warns also include `daysLeft` (`1`–`3`). Empty `[]` means nothing to notify.
+
+```json
+[
+  { "kind": "warn", "email": "sam@example.com", "name": "Sam Chen", "daysLeft": 2 },
+  { "kind": "trip", "email": "pat@example.com", "name": "Pat Nguyen" }
+]
+```
 
 Call `POST /run` on a schedule with n8n, cron, or anything else. Send `Authorization: Bearer <RUN_TOKEN>`. Hook any notification system to the JSON it returns. Set the HTTP timeout to a few minutes; a family with several people is many 1Password CLI calls. Treat `409` as "already running" and wait for the next schedule.
 

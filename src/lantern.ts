@@ -28,20 +28,22 @@ function check(user: User, vault: Vault) {
 }
 
 async function run() {
-  const warnings: { email: string; name: string; daysLeft: number }[] = [];
-  const trips: { email: string; name: string; vaultId: string }[] = [];
+  const events: (
+    | { kind: "warn"; email: string; name: string; daysLeft: number }
+    | { kind: "trip"; email: string; name: string }
+  )[] = [];
   const map = await vaultByUser();
   const members = await listMembers();
   for (const member of members) {
     const vault = await ensureVault(member.id, map);
     const user = await getUser(member.id);
     const { warn, trip, daysLeft } = check(user, vault);
-    if (warn) warnings.push({ email: user.email, name: user.name, daysLeft });
+    if (warn) events.push({ kind: "warn", email: user.email, name: user.name, daysLeft });
     if (!trip) continue;
     await tripVault(vault, user, members);
-    trips.push({ email: user.email, name: user.name, vaultId: vault.id });
+    events.push({ kind: "trip", email: user.email, name: user.name });
   }
-  return { warnings, trips };
+  return events;
 }
 
 let running = false;
