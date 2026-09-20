@@ -22,9 +22,8 @@ if (!Number.isInteger(inactiveAfterDays) || inactiveAfterDays < 7 || inactiveAft
   throw new Error("INACTIVE_AFTER_DAYS must be 7-365");
 }
 
-export const testDay = process.env.TEST_DAY === undefined || process.env.TEST_DAY === ""
-  ? undefined
-  : Number(process.env.TEST_DAY);
+const testDayRaw = process.env.TEST_DAY?.trim();
+export const testDay = !testDayRaw ? undefined : Number(testDayRaw);
 if (testDay !== undefined && (!Number.isInteger(testDay) || testDay < 0)) {
   throw new Error("TEST_DAY must be an integer >= 0");
 }
