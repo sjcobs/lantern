@@ -15,4 +15,5 @@
   <Config Name="Inactive after days" Target="INACTIVE_AFTER_DAYS" Default="90" Mode="" Description="Days without a 1Password login before a trip. 7-365. Warns for the last 3 days." Type="Variable" Display="always" Required="false" Mask="false"/>
   <Config Name="Test day" Target="TEST_DAY" Default="" Mode="" Description="Leave empty. Fakes idle days for every member. 87=warn, 90=trip. Clear when done." Type="Variable" Display="always" Required="false" Mask="false"/>
   <Config Name="Ping URL" Target="PING_URL" Default="" Mode="" Description="Optional. Full URL to GET after a successful /run. Leave empty to skip." Type="Variable" Display="always" Required="false" Mask="false"/>
+  <Config Name="Auto run" Target="AUTO_RUN" Default="false" Mode="" Description="true or false. true runs on start and every 24 hours. No n8n needed. Warns are not emailed." Type="Variable" Display="always" Required="true" Mask="false"/>
 </Container>

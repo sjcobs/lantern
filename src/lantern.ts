@@ -22,12 +22,18 @@ if (pingUrl) {
   }
 }
 
+const autoRunString = (process.env.AUTO_RUN ?? "false").trim();
+if (autoRunString !== "true" && autoRunString !== "false") {
+  throw new Error("AUTO_RUN must be true or false");
+}
+const autoRun = autoRunString === "true";
+
 async function ping(url: string) {
   try {
     const res = await fetch(url);
-    if (!res.ok) console.log(`ping ${res.status}`);
+    if (!res.ok) console.error(`ping ${res.status}`);
   } catch (error) {
-    console.log(`ping ${String(error)}`);
+    console.error(`ping ${String(error)}`);
   }
 }
 
@@ -45,26 +51,39 @@ function check(user: User, vault: Vault) {
   return { warn, trip, daysLeft };
 }
 
-async function run() {
-  const events: (
-    | { kind: "warn"; email: string; name: string; daysLeft: number }
-    | { kind: "trip"; email: string; name: string }
-  )[] = [];
-  const map = await vaultByUser();
-  const members = await listMembers();
-  for (const member of members) {
-    const vault = await ensureVault(member.id, map);
-    const user = await getUser(member.id);
-    const { warn, trip, daysLeft } = check(user, vault);
-    if (warn) events.push({ kind: "warn", email: user.email, name: user.name, daysLeft });
-    if (!trip) continue;
-    await tripVault(vault, user, members);
-    events.push({ kind: "trip", email: user.email, name: user.name });
-  }
-  return events;
-}
-
 let running = false;
+
+async function run() {
+  if (running) {
+    console.warn("already running...");
+    return;
+  }
+  running = true;
+  try {
+    const events: (
+      | { kind: "warn"; email: string; name: string; daysLeft: number }
+      | { kind: "trip"; email: string; name: string }
+    )[] = [];
+    const map = await vaultByUser();
+    const members = await listMembers();
+    for (const member of members) {
+      const vault = await ensureVault(member.id, map);
+      const user = await getUser(member.id);
+      const { warn, trip, daysLeft } = check(user, vault);
+      if (warn) events.push({ kind: "warn", email: user.email, name: user.name, daysLeft });
+      if (!trip) continue;
+      await tripVault(vault, user, members);
+      events.push({ kind: "trip", email: user.email, name: user.name });
+    }
+    if (pingUrl) await ping(pingUrl);
+    return events;
+  } catch (error) {
+    console.error("run failed", error);
+    throw error;
+  } finally {
+    running = false;
+  }
+}
 
 createServer(async (req, res) => {
   const path = new URL(req.url ?? "/", "http://lantern").pathname;
@@ -74,43 +93,44 @@ createServer(async (req, res) => {
     return;
   }
   if (req.method !== "POST" || path !== "/run") {
-    console.log("path not found", path);
+    console.error("path not found", path);
     res.writeHead(404);
     res.end();
     return;
   }
   if (!authorized(req.headers.authorization)) {
-    console.log("unauthorized");
-    console.log("make sure authorization bearer token matches RUN_TOKEN");
+    console.error("unauthorized");
+    console.error("authorization bearer token missing or invalid");
     res.writeHead(401);
     res.end();
     return;
   }
-  if (running) {
-    console.log("already running...");
-    res.writeHead(409);
-    res.end();
-    return;
-  }
-  running = true;
   try {
     const result = await run();
-    if (pingUrl) await ping(pingUrl);
+    if (result === undefined) {
+      res.writeHead(409);
+      res.end();
+      return;
+    }
     res.writeHead(200, { "content-type": "application/json" });
     res.end(JSON.stringify(result));
-  } catch (error) {
-    console.log("run failed", error);
+  } catch {
     res.writeHead(500);
     res.end();
-  } finally {
-    running = false;
   }
 }).listen(port, "0.0.0.0", () => {
-  console.log(`listening on ${port}`);
-  console.log(`POST /run`);
+  console.log(`listening on port ${port}`);
+  console.log("waiting for POST /run...");
 
   if (testDay !== undefined) {
-    console.log("WARNING: TEST_DAY is set, faking last auth for every member");
-    console.log(`TEST_DAY=${testDay}`);
+    console.warn("WARNING: TEST_DAY is set, faking last auth for every member");
+    console.warn(`TEST_DAY=${testDay}`);
+  }
+  if (autoRun) {
+    console.log("AUTO_RUN=true, running automatically every 24 hours");
+    void run().catch(() => {});
+    setInterval(() => {
+      void run().catch(() => {});
+    }, 86_400_000);
   }
 });
