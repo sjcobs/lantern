@@ -5,11 +5,12 @@
   <Registry>https://ghcr.io/</Registry>
   <Network>bridge</Network>
   <WebUI>http://[IP]:[PORT:6346]/</WebUI>
+  <Overview>1Password family dead man's switch. n8n POSTs /run with the run token. GET / shows running.</Overview>
   <Privileged>false</Privileged>
-  <Config Name="Port" Target="6346" Default="6346" Mode="tcp" Description="" Type="Port" Display="always" Required="true" Mask="false"/>
-  <Config Name="Token" Target="OP_SERVICE_ACCOUNT_TOKEN" Default="" Mode="" Description="" Type="Variable" Display="always" Required="true" Mask="true"/>
-  <Config Name="Run token" Target="RUN_TOKEN" Default="" Mode="" Description="Bearer token for POST /run" Type="Variable" Display="always" Required="true" Mask="true"/>
-  <Config Name="Vault title" Target="VAULT_TITLE" Default="Lantern" Mode="" Description="" Type="Variable" Display="always" Required="false" Mask="false"/>
-  <Config Name="Inactive after days" Target="INACTIVE_AFTER_DAYS" Default="30" Mode="" Description="7-365" Type="Variable" Display="always" Required="false" Mask="false"/>
-  <Config Name="Test day" Target="TEST_DAY" Default="" Mode="" Description="Fake idle days for every member. Leave empty. 27=warn 30=trip" Type="Variable" Display="always" Required="false" Mask="false"/>
+  <Config Name="Port" Target="6346" Default="6346" Mode="tcp" Description="HTTP port. n8n: POST /run. Browser: GET / returns running." Type="Port" Display="always" Required="true" Mask="false"/>
+  <Config Name="Token" Target="OP_SERVICE_ACCOUNT_TOKEN" Default="" Mode="" Description="1Password service account token. Grant Create vaults only." Type="Variable" Display="always" Required="true" Mask="true"/>
+  <Config Name="Run token" Target="RUN_TOKEN" Default="" Mode="" Description="Shared secret. n8n header: Authorization: Bearer &lt;this value&gt;" Type="Variable" Display="always" Required="true" Mask="true"/>
+  <Config Name="Vault title" Target="VAULT_TITLE" Default="Lantern" Mode="" Description="Name of each person's live vault. Default Lantern." Type="Variable" Display="always" Required="false" Mask="false"/>
+  <Config Name="Inactive after days" Target="INACTIVE_AFTER_DAYS" Default="30" Mode="" Description="Days without a 1Password login before a trip. 7-365. Warns for the last 3 days." Type="Variable" Display="always" Required="false" Mask="false"/>
+  <Config Name="Test day" Target="TEST_DAY" Default="" Mode="" Description="Leave empty. Fakes idle days for every member. 27=warn, 30=trip. Clear when done." Type="Variable" Display="always" Required="false" Mask="false"/>
 </Container>
