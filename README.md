@@ -17,9 +17,9 @@ It works by using a 1Password service account token with **Create vaults** acces
 ]
 ```
 
-Call `POST /run` on a schedule with n8n, cron, or anything else. Send `Authorization: Bearer <RUN_TOKEN>`. Hook any notification system to the JSON it returns. Set the HTTP timeout to a few minutes; a family with several people is many 1Password CLI calls. Treat `409` as "already running" and wait for the next schedule.
+Call `POST /run` on a schedule with n8n, cron, or anything else. Send `Authorization: Bearer <RUN_TOKEN>`. Hook any notification system to the JSON it returns. Set the HTTP timeout to a few minutes; a family with several people is many 1Password CLI calls. `401`, `409`, and `500` are printed in the Lantern log. n8n only needs the `200` array.
 
-`GET /` returns `running` so you can see the process is up. It does not start a pass.
+`GET /` returns `running` so you can see the process is up. It does not start a pass. If `PING_URL` is set, a successful `/run` GETs that URL. Leave it empty to skip. A `500` does not ping.
 
 Local runs also need the 1Password CLI (`op`) on your PATH.
 
@@ -27,7 +27,7 @@ Local runs also need the 1Password CLI (`op`) on your PATH.
 
 1. Create a 1Password service account and set `OP_SERVICE_ACCOUNT_TOKEN`.
 2. Set `RUN_TOKEN` to a long random string. n8n must send it as a bearer token.
-3. Optional: `VAULT_TITLE` (vault name), `INACTIVE_AFTER_DAYS` (30, min 7, max 365), `PORT` (6346).
+3. Optional: `VAULT_TITLE` (vault name), `INACTIVE_AFTER_DAYS` (90, min 7, max 365), `PORT` (6346), `PING_URL` (any ping URL).
 4. Schedule `POST /run`. Use the Unraid host IP, for example `http://<unraid-ip>:6346/run`.
 
 ## Run
@@ -37,7 +37,7 @@ npm install
 $Env:OP_SERVICE_ACCOUNT_TOKEN = "ops_your-token-here"
 $Env:RUN_TOKEN = "a-long-random-string"
 $Env:VAULT_TITLE = "Lantern"
-$Env:INACTIVE_AFTER_DAYS = "30"
+$Env:INACTIVE_AFTER_DAYS = "90"
 $Env:PORT = "6346"
 npm start
 ```
@@ -47,23 +47,24 @@ curl.exe http://localhost:6346/
 curl.exe -X POST http://localhost:6346/run -H "Authorization: Bearer a-long-random-string"
 ```
 
-To test warn or trip without waiting, set `TEST_DAY`. It pretends every member has been idle that many days. Put a dummy item in **your** Lantern only. `27` warns (3 days left). `30` trips anyone who has items. Leave it empty when you are done. On Unraid, apply the new template (or add the variable), restart the container, then clear it.
+To test warn or trip without waiting, set `TEST_DAY`. It pretends every member has been idle that many days. Put a dummy item in **your** Lantern only. `87` warns (3 days left). `90` trips anyone who has items. Leave it empty when you are done. On Unraid, apply the new template (or add the variable), restart the container, then clear it.
 
 ```powershell
-$Env:TEST_DAY = "27"
+$Env:TEST_DAY = "87"
 npm start
 ```
 
 ## Env
 
-| Variable                   | Default      |
-| -------------------------- | ------------ |
-| `OP_SERVICE_ACCOUNT_TOKEN` | required     |
-| `RUN_TOKEN`                | required     |
-| `VAULT_TITLE`              | `Lantern`    |
-| `INACTIVE_AFTER_DAYS`      | `30` (7-365) |
-| `TEST_DAY`                 | empty (off)  |
-| `PORT`                     | `6346`       |
+| Variable                   | Default      | Description |
+| -------------------------- | ------------ | ----------- |
+| `OP_SERVICE_ACCOUNT_TOKEN` | required     | 1Password service account. Grant Create vaults only. |
+| `RUN_TOKEN`                | required     | Shared secret. Any random string. Send with `Authorization: Bearer <run_token>`. |
+| `VAULT_TITLE`              | `Lantern`    | Name of vaults to create. |
+| `INACTIVE_AFTER_DAYS`      | `90` (7-365) | Days without a 1Password login before a trip. Warns for the last 3 days. |
+| `TEST_DAY`                 | empty (off)  | Fakes idle days for every member. `87` warns, `90` trips. |
+| `PING_URL`                 | empty (off)  | GET this URL after a successful `/run`. |
+| `PORT`                     | `6346`       | HTTP port. `POST /run`, `GET /` returns `running`. |
 
 ## Limits
 

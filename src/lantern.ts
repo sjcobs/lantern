@@ -13,6 +13,24 @@ if (!runToken) {
   throw new Error("RUN_TOKEN is missing");
 }
 
+const pingUrl = process.env.PING_URL?.trim();
+if (pingUrl) {
+  try {
+    new URL(pingUrl);
+  } catch {
+    throw new Error("PING_URL must be a URL");
+  }
+}
+
+async function ping(url: string) {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) console.log(`ping ${res.status}`);
+  } catch (error) {
+    console.log(`ping ${String(error)}`);
+  }
+}
+
 function authorized(header: string | undefined) {
   const expected = Buffer.from(`Bearer ${runToken}`);
   const actual = Buffer.from(header ?? "");
@@ -56,16 +74,19 @@ createServer(async (req, res) => {
     return;
   }
   if (req.method !== "POST" || path !== "/run") {
+    console.log("not found", req.method, path);
     res.writeHead(404);
     res.end();
     return;
   }
   if (!authorized(req.headers.authorization)) {
+    console.log("unauthorized");
     res.writeHead(401, { "content-type": "application/json" });
     res.end(JSON.stringify({ error: "unauthorized" }));
     return;
   }
   if (running) {
+    console.log("already running");
     res.writeHead(409, { "content-type": "application/json" });
     res.end(JSON.stringify({ error: "already running" }));
     return;
@@ -73,9 +94,11 @@ createServer(async (req, res) => {
   running = true;
   try {
     const result = await run();
+    if (pingUrl) await ping(pingUrl);
     res.writeHead(200, { "content-type": "application/json" });
     res.end(JSON.stringify(result));
   } catch (error) {
+    console.log(error);
     res.writeHead(500, { "content-type": "application/json" });
     res.end(JSON.stringify({ error: String(error) }));
   } finally {

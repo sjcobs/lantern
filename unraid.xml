@@ -12,6 +12,7 @@
   <Config Name="Token" Target="OP_SERVICE_ACCOUNT_TOKEN" Default="" Mode="" Description="1Password service account token. Grant Create vaults only." Type="Variable" Display="always" Required="true" Mask="true"/>
   <Config Name="Run token" Target="RUN_TOKEN" Default="" Mode="" Description="Shared secret. n8n header: Authorization: Bearer &lt;this value&gt;" Type="Variable" Display="always" Required="true" Mask="true"/>
   <Config Name="Vault title" Target="VAULT_TITLE" Default="Lantern" Mode="" Description="Name of each person's live vault. Default Lantern." Type="Variable" Display="always" Required="false" Mask="false"/>
-  <Config Name="Inactive after days" Target="INACTIVE_AFTER_DAYS" Default="30" Mode="" Description="Days without a 1Password login before a trip. 7-365. Warns for the last 3 days." Type="Variable" Display="always" Required="false" Mask="false"/>
-  <Config Name="Test day" Target="TEST_DAY" Default="" Mode="" Description="Leave empty. Fakes idle days for every member. 27=warn, 30=trip. Clear when done." Type="Variable" Display="always" Required="false" Mask="false"/>
+  <Config Name="Inactive after days" Target="INACTIVE_AFTER_DAYS" Default="90" Mode="" Description="Days without a 1Password login before a trip. 7-365. Warns for the last 3 days." Type="Variable" Display="always" Required="false" Mask="false"/>
+  <Config Name="Test day" Target="TEST_DAY" Default="" Mode="" Description="Leave empty. Fakes idle days for every member. 87=warn, 90=trip. Clear when done." Type="Variable" Display="always" Required="false" Mask="false"/>
+  <Config Name="Ping URL" Target="PING_URL" Default="" Mode="" Description="Optional. Full URL to GET after a successful /run. Leave empty to skip." Type="Variable" Display="always" Required="false" Mask="false"/>
 </Container>

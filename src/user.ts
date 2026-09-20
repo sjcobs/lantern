@@ -17,7 +17,7 @@ export async function listMembers() {
   return members;
 }
 
-export const inactiveAfterDays = Number(process.env.INACTIVE_AFTER_DAYS) || 30;
+export const inactiveAfterDays = Number(process.env.INACTIVE_AFTER_DAYS) || 90;
 if (!Number.isInteger(inactiveAfterDays) || inactiveAfterDays < 7 || inactiveAfterDays > 365) {
   throw new Error("INACTIVE_AFTER_DAYS must be 7-365");
 }
