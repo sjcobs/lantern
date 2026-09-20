@@ -61,8 +61,8 @@ async function run() {
   running = true;
   try {
     const events: (
-      | { kind: "warn"; email: string; name: string; daysLeft: number }
-      | { kind: "trip"; email: string; name: string }
+      | { notify: "warn"; email: string; name: string; daysLeft: number }
+      | { notify: "trip"; email: string; name: string }
     )[] = [];
     const map = await vaultByUser();
     const members = await listMembers();
@@ -70,10 +70,10 @@ async function run() {
       const vault = await ensureVault(member.id, map);
       const user = await getUser(member.id);
       const { warn, trip, daysLeft } = check(user, vault);
-      if (warn) events.push({ kind: "warn", email: user.email, name: user.name, daysLeft });
+      if (warn) events.push({ notify: "warn", email: user.email, name: user.name, daysLeft });
       if (!trip) continue;
       await tripVault(vault, user, members);
-      events.push({ kind: "trip", email: user.email, name: user.name });
+      events.push({ notify: "trip", email: user.email, name: user.name });
     }
     if (pingUrl) await ping(pingUrl);
     return events;

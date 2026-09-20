@@ -4,75 +4,68 @@
 
 # Lantern
 
-Lantern watches your light. Go dark too long, and it passes your chosen secrets to family members automatically, inside 1Password.
+A guiding light for when you go dark. Automatically passes your chosen secrets to family members, inside 1Password.
 
-It works by using a 1Password service account token with **Create vaults** access only; it should not have access to your other vaults. Each `POST /run` creates a special vault for every family member if they do not already have one (default title `Lantern`). The clock is 1Password login time (`last_auth_at`), not a timer this app stores. If they are overdue and that vault has items, Lantern grants **view-only** access to every family member, renames it to `Lantern` plus their first name, and creates a new empty vault for the inactive person. Empty vaults are left alone. The opened vault is an archive. The new Lantern still allows editing.
+Lantern talks to 1Password only through the [official CLI](https://developer.1password.com/docs/cli) (`op`) and the [official SDK](https://developer.1password.com/docs/sdks) (`@1password/sdk`).
 
-`POST /run` returns a JSON array. Each item has `kind` of `warn` or `trip`, plus `email` and `name`. Warns also include `daysLeft` (`1`–`3`). Empty `[]` means nothing to notify.
+It works by using a 1Password service account token with **Create vaults** access only; it should not have access to your other vaults. Each `POST /run` creates a special vault for every family member if they do not already have one (default title `Lantern`). The clock is 1Password login time (`last_auth_at`), not a timer this app stores, and not an email/SMS check-in. If they are overdue and that vault has items, Lantern grants **view-only** access to every family member, renames it to `Lantern` plus their first name (for example `Lantern - Ember`), and creates a new empty Lantern vault for the inactive person.
+
+## Instructions
+
+1. Host the Docker image on your local network (Unraid template provided). The image needs to always be running and **NEVER** be reverse proxied or exposed to the public.
+2. Log in to your 1Password dashboard on the web to create a service account. Navigate to Developer → Directory → Service Account.
+3. Create a new service account named Lantern (or anything you choose). IMPORTANT: Only give your service account the `Allow creation of new vaults` permission. Do **NOT** give it access to any vaults.
+4. Save your service account token and set `OP_SERVICE_ACCOUNT_TOKEN`.
+5. Generate a long random string and set `RUN_TOKEN`. You must send this token when calling `POST /run`.
+6. Set a scheduler to run `POST /run` once a day, or set `AUTO_RUN` to `true` to use the built-in scheduler.
+7. Everyone in your family should now have their own personal Lantern vault. That vault is shared with all family members if the owner does not log in to 1Password within the `INACTIVE_AFTER_DAYS` you set.
+
+Endpoint Example:
+
+```bash
+curl.exe -X POST http://localhost:6346/run -H "Authorization: Bearer <RUN_TOKEN>"
+```
+
+## Notifications
+
+You can use n8n (or your preferred workflow scheduler) to notify family members of events by sending emails, SMS, push notifications, or even a webhook to your Grok bot. When you call `POST /run` you will receive a JSON array containing all notify events, or empty `[]` if none. Each event has `notify` (`warn` or `trip`), `email`, and `name`. Warn events also include `daysLeft` (`1`–`3`).
+
+A family with several people can take time to process, so make sure to set your HTTP timeout to a few minutes. Any errors or warnings are printed in the Lantern log.
+
+Return Example:
 
 ```json
 [
-  { "kind": "warn", "email": "sam@example.com", "name": "Sam Chen", "daysLeft": 2 },
-  { "kind": "trip", "email": "pat@example.com", "name": "Pat Nguyen" }
+  { "notify": "warn", "email": "ember@example.com", "name": "Ember Voss", "daysLeft": 2 },
+  { "notify": "trip", "email": "nix@example.com", "name": "Nix Thorne" }
 ]
 ```
 
-Call `POST /run` on a schedule with n8n, cron, or anything else. Send `Authorization: Bearer <RUN_TOKEN>`. Hook any notification system to the JSON it returns. Set the HTTP timeout to a few minutes; a family with several people is many 1Password CLI calls. `401`, `409`, and `500` are printed in the Lantern log. n8n only needs the `200` array.
-
-Or set `AUTO_RUN` to `true` to run on start and every 24 hours. No scheduler needed. Trips still happen in 1Password. Warns are discarded unless something also calls `/run`. `true` or `false` only. Default `false`.
-
-`GET /` returns `running` so you can see the process is up. It does not start a pass. If `PING_URL` is set, a successful pass GETs that URL. Leave it empty to skip. A `500` does not ping.
-
-Local runs also need the 1Password CLI (`op`) on your PATH.
-
 ## Settings
 
-1. Create a 1Password service account and set `OP_SERVICE_ACCOUNT_TOKEN`.
-2. Set `RUN_TOKEN` to a long random string. n8n must send it as a bearer token.
-3. Optional: `VAULT_TITLE` (vault name), `INACTIVE_AFTER_DAYS` (90, min 7, max 365), `PORT` (6346), `PING_URL` (any ping URL), `AUTO_RUN` (`true` or `false`).
-4. Schedule `POST /run`, or set `AUTO_RUN` to `true`. Use the Unraid host IP, for example `http://<unraid-ip>:6346/run`.
+| Variable                   | Default     | Description                                                                                                                                                                                                                             |
+| -------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `OP_SERVICE_ACCOUNT_TOKEN` | required    | 1Password service account token with allow creation of new vaults permission only.                                                                                                                                                      |
+| `RUN_TOKEN`                | required    | Shared secret. Any long random string. You must send this token when calling `POST /run`.                                                                                                                                               |
+| `VAULT_TITLE`              | `Lantern`   | Name of vaults Lantern will create.                                                                                                                                                                                                     |
+| `INACTIVE_AFTER_DAYS`      | `90`        | Days without a 1Password login before a user's vault trips. Warns for the last 3 days. Valid values: 7–365.                                                                                                                             |
+| `TEST_DAY`                 | empty (off) | Test the system without waiting. It pretends every member has been idle that many days. Put a dummy item in your Lantern vault. `87` warns (3 days left). `90` trips anyone who has items. Leave it empty when you are done.            |
+| `PING_URL`                 | empty (off) | Get notified if the container stops running by settings `PING_URL` to an external service like [healthchecks.io](https://healthchecks.io/), a successful run pings the URL. Leave empty to skip.                                        |
+| `AUTO_RUN`                 | `false`     | If you do not care about notifications, you can set `AUTO_RUN` to `true` which automatically call the run function on start and once every 24 hours from the time the container starts. No scheduler needed. No notifications returned. |
+| `PORT`                     | `6346`      | HTTP port to run on. `running`.                                                                                                                                                                                                         |
 
-## Run
+## Dev Environment
 
 ```powershell
 npm install
 $Env:OP_SERVICE_ACCOUNT_TOKEN = "ops_your-token-here"
 $Env:RUN_TOKEN = "a-long-random-string"
-$Env:VAULT_TITLE = "Lantern"
-$Env:INACTIVE_AFTER_DAYS = "90"
-$Env:PORT = "6346"
-$Env:AUTO_RUN = "false"
 npm start
 ```
 
-```powershell
-curl.exe http://localhost:6346/
-curl.exe -X POST http://localhost:6346/run -H "Authorization: Bearer a-long-random-string"
-```
+## Limitations
 
-To test warn or trip without waiting, set `TEST_DAY`. It pretends every member has been idle that many days. Put a dummy item in **your** Lantern only. `87` warns (3 days left). `90` trips anyone who has items. Leave it empty when you are done. On Unraid, apply the new template (or add the variable), restart the container, then clear it.
-
-```powershell
-$Env:TEST_DAY = "87"
-npm start
-```
-
-## Env
-
-| Variable                   | Default      | Description                                                                      |
-| -------------------------- | ------------ | -------------------------------------------------------------------------------- |
-| `OP_SERVICE_ACCOUNT_TOKEN` | required     | 1Password service account. Grant Create vaults only.                             |
-| `RUN_TOKEN`                | required     | Shared secret. Any random string. Send with `Authorization: Bearer <run_token>`. |
-| `VAULT_TITLE`              | `Lantern`    | Name of vaults to create.                                                        |
-| `INACTIVE_AFTER_DAYS`      | `90` (7-365) | Days without a 1Password login before a trip. Warns for the last 3 days.         |
-| `TEST_DAY`                 | empty (off)  | Fakes idle days for every member. `87` warns, `90` trips.                        |
-| `PING_URL`                 | empty (off)  | GET this URL after a successful `/run`.                                          |
-| `AUTO_RUN`                 | `false`      | `true` or `false`. `true` runs on start and every 24 hours.                      |
-| `PORT`                     | `6346`       | HTTP port. `POST /run`, `GET /` returns `running`.                               |
-
-## Limits
-
-An admin can delete anyone's Lantern vault (live or already opened), add themselves or others to it, and change permissions from the 1Password dashboard. View-only grants after a trip do not stop that. Trust your admins, or do not put secrets they can view, edit, destroy.
+An admin can delete anyone's Lantern vault (live or already opened), add themselves or others to it, and change permissions from the 1Password dashboard. View-only grants after a trip do not stop that. Trust your admins, or do not put secrets they can view, edit, or destroy.
 
 ## Disclaimer
 

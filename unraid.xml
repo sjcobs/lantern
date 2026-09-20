@@ -6,9 +6,9 @@
   <Network>bridge</Network>
   <WebUI>http://[IP]:[PORT:6346]/</WebUI>
   <Icon>https://raw.githubusercontent.com/sjcobs/lantern/main/assets/logo.png</Icon>
-  <Overview>1Password family dead man's switch. n8n POSTs /run with the run token. GET / shows running.</Overview>
+  <Overview>1Password family dead man's switch. Uses the official 1Password CLI and SDK. n8n POSTs /run with the run token. GET / shows waiting for POST /run.</Overview>
   <Privileged>false</Privileged>
-  <Config Name="Port" Target="6346" Default="6346" Mode="tcp" Description="HTTP port. n8n: POST /run. Browser: GET / returns running." Type="Port" Display="always" Required="true" Mask="false"/>
+  <Config Name="Port" Target="6346" Default="6346" Mode="tcp" Description="HTTP port. n8n: POST /run. Browser: GET / returns waiting for POST /run." Type="Port" Display="always" Required="true" Mask="false"/>
   <Config Name="Token" Target="OP_SERVICE_ACCOUNT_TOKEN" Default="" Mode="" Description="1Password service account token. Grant Create vaults only." Type="Variable" Display="always" Required="true" Mask="true"/>
   <Config Name="Run token" Target="RUN_TOKEN" Default="" Mode="" Description="Shared secret. n8n header: Authorization: Bearer &lt;this value&gt;" Type="Variable" Display="always" Required="true" Mask="true"/>
   <Config Name="Vault title" Target="VAULT_TITLE" Default="Lantern" Mode="" Description="Name of each person's live vault. Default Lantern." Type="Variable" Display="always" Required="false" Mask="false"/>
