@@ -1,5 +1,5 @@
-import { createServer } from "node:http";
 import { timingSafeEqual } from "node:crypto";
+import { createServer } from "node:http";
 import { User, daysSinceAuth, getUser, inactiveAfterDays, listMembers, testDay } from "./user";
 import { Vault, ensureVault, tripVault, vaultByUser } from "./vault";
 
@@ -70,25 +70,26 @@ createServer(async (req, res) => {
   const path = new URL(req.url ?? "/", "http://lantern").pathname;
   if (req.method === "GET" && path === "/") {
     res.writeHead(200, { "content-type": "text/plain" });
-    res.end("running");
+    res.end("waiting for POST /run...");
     return;
   }
   if (req.method !== "POST" || path !== "/run") {
-    console.log("not found", req.method, path);
+    console.log("path not found", path);
     res.writeHead(404);
     res.end();
     return;
   }
   if (!authorized(req.headers.authorization)) {
     console.log("unauthorized");
-    res.writeHead(401, { "content-type": "application/json" });
-    res.end(JSON.stringify({ error: "unauthorized" }));
+    console.log("make sure authorization bearer token matches RUN_TOKEN");
+    res.writeHead(401);
+    res.end();
     return;
   }
   if (running) {
-    console.log("already running");
-    res.writeHead(409, { "content-type": "application/json" });
-    res.end(JSON.stringify({ error: "already running" }));
+    console.log("already running...");
+    res.writeHead(409);
+    res.end();
     return;
   }
   running = true;
@@ -98,15 +99,18 @@ createServer(async (req, res) => {
     res.writeHead(200, { "content-type": "application/json" });
     res.end(JSON.stringify(result));
   } catch (error) {
-    console.log(error);
-    res.writeHead(500, { "content-type": "application/json" });
-    res.end(JSON.stringify({ error: String(error) }));
+    console.log("run failed", error);
+    res.writeHead(500);
+    res.end();
   } finally {
     running = false;
   }
 }).listen(port, "0.0.0.0", () => {
-  console.log(`listening on ${port}, POST /run`);
+  console.log(`listening on ${port}`);
+  console.log(`POST /run`);
+
   if (testDay !== undefined) {
-    console.log(`TEST_DAY=${testDay} (fakes last auth for every member)`);
+    console.log("WARNING: TEST_DAY is set, faking last auth for every member");
+    console.log(`TEST_DAY=${testDay}`);
   }
 });

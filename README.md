@@ -56,19 +56,19 @@ npm start
 
 ## Env
 
-| Variable                   | Default      | Description |
-| -------------------------- | ------------ | ----------- |
-| `OP_SERVICE_ACCOUNT_TOKEN` | required     | 1Password service account. Grant Create vaults only. |
+| Variable                   | Default      | Description                                                                      |
+| -------------------------- | ------------ | -------------------------------------------------------------------------------- |
+| `OP_SERVICE_ACCOUNT_TOKEN` | required     | 1Password service account. Grant Create vaults only.                             |
 | `RUN_TOKEN`                | required     | Shared secret. Any random string. Send with `Authorization: Bearer <run_token>`. |
-| `VAULT_TITLE`              | `Lantern`    | Name of vaults to create. |
-| `INACTIVE_AFTER_DAYS`      | `90` (7-365) | Days without a 1Password login before a trip. Warns for the last 3 days. |
-| `TEST_DAY`                 | empty (off)  | Fakes idle days for every member. `87` warns, `90` trips. |
-| `PING_URL`                 | empty (off)  | GET this URL after a successful `/run`. |
-| `PORT`                     | `6346`       | HTTP port. `POST /run`, `GET /` returns `running`. |
+| `VAULT_TITLE`              | `Lantern`    | Name of vaults to create.                                                        |
+| `INACTIVE_AFTER_DAYS`      | `90` (7-365) | Days without a 1Password login before a trip. Warns for the last 3 days.         |
+| `TEST_DAY`                 | empty (off)  | Fakes idle days for every member. `87` warns, `90` trips.                        |
+| `PING_URL`                 | empty (off)  | GET this URL after a successful `/run`.                                          |
+| `PORT`                     | `6346`       | HTTP port. `POST /run`, `GET /` returns `running`.                               |
 
 ## Limits
 
-Lantern does not replace 1Password family admins. An admin can delete anyone's Lantern vault (live or already opened), add themselves or others to it, and change permissions from the 1Password dashboard. View-only grants after a trip do not stop that. Trust your admins, or do not put secrets only they can destroy.
+An admin can delete anyone's Lantern vault (live or already opened), add themselves or others to it, and change permissions from the 1Password dashboard. View-only grants after a trip do not stop that. Trust your admins, or do not put secrets they can view, edit, destroy.
 
 ## Disclaimer
 
