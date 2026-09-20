@@ -1,3 +1,7 @@
+<p align="left">
+  <img src="assets/logo.png" alt="Lantern" width="110" />
+</p>
+
 # Lantern
 
 Lantern watches your light. Go dark too long, and it passes your chosen secrets to family members automatically, inside 1Password.
@@ -77,4 +81,4 @@ Use at your own risk. This is not a will, a backup, or an official 1Password pro
 
 Bitcoin: `bc1qzjrleryk7pmyyhw9xpg9dysvygztstk8u7qehn`
 
-<img src="btc.png" alt="Bitcoin QR" width="160" />
+<img src="assets/btc.png" alt="Bitcoin QR" width="160" />

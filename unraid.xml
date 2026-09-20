@@ -5,6 +5,7 @@
   <Registry>https://ghcr.io/</Registry>
   <Network>bridge</Network>
   <WebUI>http://[IP]:[PORT:6346]/</WebUI>
+  <Icon>https://raw.githubusercontent.com/sjcobs/lantern/main/assets/logo.png</Icon>
   <Overview>1Password family dead man's switch. n8n POSTs /run with the run token. GET / shows running.</Overview>
   <Privileged>false</Privileged>
   <Config Name="Port" Target="6346" Default="6346" Mode="tcp" Description="HTTP port. n8n: POST /run. Browser: GET / returns running." Type="Port" Display="always" Required="true" Mask="false"/>
