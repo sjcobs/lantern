@@ -7,5 +7,7 @@ npm start
 ```
 
 ```powershell
-npm run build
+curl.exe -X POST http://localhost:6346/run
 ```
+
+n8n: `POST http://<unraid-ip>:6346/run`

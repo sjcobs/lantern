@@ -12,4 +12,5 @@ COPY package.json package-lock.json tsconfig.json ./
 COPY src ./src
 RUN npm ci
 
+EXPOSE 6346
 CMD ["npm", "start"]

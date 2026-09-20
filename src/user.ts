@@ -31,11 +31,6 @@ export function daysSinceAuth(user: User) {
 }
 
 export async function getUser(userId: string) {
-  const { stdout } = await execa("op", [
-    "user",
-    "get",
-    userId,
-    "--format=json",
-  ]);
+  const { stdout } = await execa("op", ["user", "get", userId, "--format=json"]);
   return JSON.parse(stdout) as User;
 }

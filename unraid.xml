@@ -4,7 +4,9 @@
   <Repository>ghcr.io/sjcobs/lantern:latest</Repository>
   <Registry>https://ghcr.io/</Registry>
   <Network>bridge</Network>
+  <WebUI>http://[IP]:[PORT:6346]/</WebUI>
   <Privileged>false</Privileged>
+  <Config Name="Port" Target="6346" Default="6346" Mode="tcp" Description="" Type="Port" Display="always" Required="true" Mask="false"/>
   <Config Name="Token" Target="OP_SERVICE_ACCOUNT_TOKEN" Default="" Mode="" Description="" Type="Variable" Display="always" Required="true" Mask="true"/>
   <Config Name="Vault title" Target="VAULT_TITLE" Default="Lantern" Mode="" Description="" Type="Variable" Display="always" Required="false" Mask="false"/>
   <Config Name="Inactive after days" Target="INACTIVE_AFTER_DAYS" Default="30" Mode="" Description="" Type="Variable" Display="always" Required="false" Mask="false"/>
