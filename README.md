@@ -2,7 +2,7 @@
 
 Lantern watches your light. Go dark too long, and it passes your chosen secrets to family members automatically, inside 1Password.
 
-It works by using a 1Password service account token with **Create vaults** access only; it should not have access to your other vaults. Each `POST /run` creates a special vault for every family member if they do not already have one (default title `Lantern`). The clock is 1Password login time (`last_auth_at`), not a timer this app stores. For the last 3 days before a trip, the payload lists them under `warnings`. If they are overdue and that vault has items, Lantern grants **view-only** access to every family member, renames it to `Lantern` plus their first name, and creates a new empty vault for the inactive person. That lands under `trips`. Empty vaults are left alone. The opened vault is an archive; a 1Password admin can delete it later. The new Lantern still allows editing.
+It works by using a 1Password service account token with **Create vaults** access only; it should not have access to your other vaults. Each `POST /run` creates a special vault for every family member if they do not already have one (default title `Lantern`). The clock is 1Password login time (`last_auth_at`), not a timer this app stores. For the last 3 days before a trip, the payload lists them under `warnings`. If they are overdue and that vault has items, Lantern grants **view-only** access to every family member, renames it to `Lantern` plus their first name, and creates a new empty vault for the inactive person. That lands under `trips`. Empty vaults are left alone. The opened vault is an archive. The new Lantern still allows editing.
 
 Call `POST /run` on a schedule with n8n, cron, or anything else. Send `Authorization: Bearer <RUN_TOKEN>`. Hook any notification system to the JSON it returns. Set the HTTP timeout to a few minutes; a family with several people is many 1Password CLI calls. Treat `409` as "already running" and wait for the next schedule.
 
@@ -43,6 +43,10 @@ curl.exe -X POST http://localhost:6346/run -H "Authorization: Bearer a-long-rand
 | `VAULT_TITLE`              | `Lantern`    |
 | `INACTIVE_AFTER_DAYS`      | `30` (7-365) |
 | `PORT`                     | `6346`       |
+
+## Limits
+
+Lantern does not replace 1Password family admins. An admin can delete anyone's Lantern vault (live or already opened), add themselves or others to it, and change permissions from the 1Password dashboard. View-only grants after a trip do not stop that. Trust your admins, or do not put secrets only they can destroy.
 
 ## Disclaimer
 
