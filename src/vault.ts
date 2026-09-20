@@ -86,7 +86,7 @@ export async function ensureVault(userId: string, map: VaultByUser) {
 
 export async function tripVault(vault: Vault, owner: User, members: User[]) {
   for (const member of members) {
-    await grantVault(vault.id, member.id, "allow_viewing,allow_editing");
+    await grantVault(vault.id, member.id, "allow_viewing");
   }
   const firstName = owner.name.trim().split(/\s+/)[0];
   await op.vaults.update(vault.id, { title: `${title} - ${firstName}` });
