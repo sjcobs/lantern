@@ -18,13 +18,13 @@ export async function listMembers() {
 }
 
 export const inactiveAfterDays = Number(process.env.INACTIVE_AFTER_DAYS) || 30;
+if (!Number.isInteger(inactiveAfterDays) || inactiveAfterDays < 7 || inactiveAfterDays > 365) {
+  throw new Error("INACTIVE_AFTER_DAYS must be 7-365");
+}
 
 export function daysSinceAuth(user: User) {
-  if (!user.last_auth_at) {
-    throw new Error("last_auth_at is missing");
-  }
   const now = Date.now();
-  const lastAuth = new Date(user.last_auth_at).getTime();
+  const lastAuth = user.last_auth_at ? new Date(user.last_auth_at).getTime() : now;
   const msPerDay = 86_400_000;
   const days = Math.floor((now - lastAuth) / msPerDay);
   return days;

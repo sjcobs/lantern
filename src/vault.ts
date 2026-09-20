@@ -19,7 +19,10 @@ export type VaultUser = {
 
 export type VaultByUser = Map<string, Vault>;
 
-const title = process.env.VAULT_TITLE || "Lantern";
+const title = (process.env.VAULT_TITLE || "Lantern").trim();
+if (!title) {
+  throw new Error("VAULT_TITLE is missing");
+}
 
 export async function listVaultMembers(vaultId: string) {
   const { stdout } = await execa("op", ["vault", "user", "list", vaultId, "--format=json"]);
@@ -85,7 +88,8 @@ export async function tripVault(vault: Vault, owner: User, members: User[]) {
   for (const member of members) {
     await grantVault(vault.id, member.id, "allow_viewing,allow_editing");
   }
-  await op.vaults.update(vault.id, { title: `${title} - ${owner.name}` });
+  const firstName = owner.name.trim().split(/\s+/)[0];
+  await op.vaults.update(vault.id, { title: `${title} - ${firstName}` });
   const id = await createVault();
   try {
     await grantVault(id, owner.id, "allow_viewing,allow_editing");
