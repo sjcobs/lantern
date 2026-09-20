@@ -1,6 +1,6 @@
 import { createServer } from "node:http";
 import { timingSafeEqual } from "node:crypto";
-import { User, daysSinceAuth, getUser, inactiveAfterDays, listMembers } from "./user";
+import { User, daysSinceAuth, getUser, inactiveAfterDays, listMembers, testDays } from "./user";
 import { Vault, ensureVault, tripVault, vaultByUser } from "./vault";
 
 const port = Number(process.env.PORT) || 6346;
@@ -81,4 +81,7 @@ createServer(async (req, res) => {
   }
 }).listen(port, "0.0.0.0", () => {
   console.log(`listening on ${port}, POST /run`);
+  if (testDays !== undefined) {
+    console.log(`TEST_DAYS=${testDays} (fakes last auth for every member)`);
+  }
 });

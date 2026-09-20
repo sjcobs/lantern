@@ -34,6 +34,13 @@ curl.exe http://localhost:6346/
 curl.exe -X POST http://localhost:6346/run -H "Authorization: Bearer a-long-random-string"
 ```
 
+To test warn or trip without waiting, set `TEST_DAYS`. It pretends every member has been idle that many days. Put a dummy item in **your** Lantern only. `27` warns (3 days left). `30` trips anyone who has items. Leave it empty when you are done. On Unraid, apply the new template (or add the variable), restart the container, then clear it.
+
+```powershell
+$Env:TEST_DAYS = "27"
+npm start
+```
+
 ## Env
 
 | Variable                   | Default      |
@@ -42,6 +49,7 @@ curl.exe -X POST http://localhost:6346/run -H "Authorization: Bearer a-long-rand
 | `RUN_TOKEN`                | required     |
 | `VAULT_TITLE`              | `Lantern`    |
 | `INACTIVE_AFTER_DAYS`      | `30` (7-365) |
+| `TEST_DAYS`                | empty (off)  |
 | `PORT`                     | `6346`       |
 
 ## Limits
