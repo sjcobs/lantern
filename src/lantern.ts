@@ -22,7 +22,7 @@ if (pingUrl) {
   }
 }
 
-const autoRunString = (process.env.AUTO_RUN ?? "false").trim();
+const autoRunString = (process.env.AUTO_RUN ?? "true").trim();
 if (autoRunString !== "true" && autoRunString !== "false") {
   throw new Error("AUTO_RUN must be true or false");
 }

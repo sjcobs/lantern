@@ -12,7 +12,7 @@ It works by using a 1Password service account token with **Create vaults** acces
 
 ## Instructions
 
-1. Host the Docker image on your local network. Unraid: Community Applications available: `Lantern`. The image needs to always be running and **NEVER** be reverse proxied or exposed to the public.
+1. Host the Docker image on your local network. If you use Unraid, install [Lantern from Community Applications](https://ca.unraid.net/apps?q=Lantern). The image needs to always be running and **NEVER** be reverse proxied or exposed to the public.
 2. Log in to your 1Password dashboard on the web to create a service account. Navigate to Developer → Directory → Service Account.
 3. Create a new service account named Lantern (or anything you choose). IMPORTANT: Only give your service account the `Allow creation of new vaults` permission. Do **NOT** give it access to any vaults.
 4. Save your service account token and set `OP_SERVICE_ACCOUNT_TOKEN`.
@@ -43,16 +43,16 @@ Return Example:
 
 ## Settings
 
-| Variable                   | Default     | Description                                                                                                                                                                                                                             |
-| -------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `OP_SERVICE_ACCOUNT_TOKEN` | required    | 1Password service account token with allow creation of new vaults permission only.                                                                                                                                                      |
-| `RUN_TOKEN`                | required    | Shared secret. Any long random string. You must send this token when calling `POST /run`.                                                                                                                                               |
-| `VAULT_TITLE`              | `Lantern`   | Name of vaults Lantern will create.                                                                                                                                                                                                     |
-| `INACTIVE_AFTER_DAYS`      | `90`        | Days without a 1Password login before a user's vault trips. Warns for the last 3 days. Valid values: 7–365.                                                                                                                             |
-| `TEST_DAY`                 | empty (off) | Test the system without waiting. It pretends every member has been idle that many days. Put a dummy item in your Lantern vault. `87` warns (3 days left). `90` trips anyone who has items. Leave it empty when you are done.            |
-| `PING_URL`                 | empty (off) | Get notified if the container stops running by settings `PING_URL` to an external service like [healthchecks.io](https://healthchecks.io/), a successful run pings the URL. Leave empty to skip.                                        |
-| `AUTO_RUN`                 | `false`     | If you do not care about notifications, you can set `AUTO_RUN` to `true` which automatically call the run function on start and once every 24 hours from the time the container starts. No scheduler needed. No notifications returned. |
-| `PORT`                     | `6346`      | HTTP port to run on. `running`.                                                                                                                                                                                                         |
+| Variable                   | Default     | Description                                                                                                                                                                                                                  |
+| -------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `OP_SERVICE_ACCOUNT_TOKEN` | required    | 1Password service account token with allow creation of new vaults permission only.                                                                                                                                           |
+| `RUN_TOKEN`                | required    | Shared secret. Any long random string. You must send this token when calling `POST /run`.                                                                                                                                    |
+| `VAULT_TITLE`              | `Lantern`   | Name of vaults Lantern will create.                                                                                                                                                                                          |
+| `INACTIVE_AFTER_DAYS`      | `90`        | Days without a 1Password login before a user's vault trips. Warns for the last 3 days. Valid values: 7–365.                                                                                                                  |
+| `TEST_DAY`                 | empty (off) | Test the system without waiting. It pretends every member has been idle that many days. Put a dummy item in your Lantern vault. `87` warns (3 days left). `90` trips anyone who has items. Leave it empty when you are done. |
+| `PING_URL`                 | empty (off) | Get notified if the container stops running by settings `PING_URL` to an external service like [healthchecks.io](https://healthchecks.io/), a successful run pings the URL. Leave empty to skip.                             |
+| `AUTO_RUN`                 | `true`      | Automatically call run on start and every 24 hours. Set `false` if you only use a scheduler like n8n. No notifications unless something externally calls `POST /run`.                                                        |
+| `PORT`                     | `6346`      | HTTP port to run on. `running`.                                                                                                                                                                                              |
 
 ## Dev Environment
 
