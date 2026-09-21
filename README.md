@@ -28,7 +28,7 @@ curl.exe -X POST http://localhost:6346/run -H "Authorization: Bearer <RUN_TOKEN>
 
 ## Notifications
 
-You can use n8n (or your preferred workflow scheduler) to notify family members of events by sending emails, SMS, push notifications, a webhook, or even the [official Grok Bot](https://x.ai/bot/IbFZmiL_mzu0Dq-K4u633). When you call `POST /run` you will receive a JSON array containing all notify events, or empty `[]` if none. Each event has `notify` (`warn` or `trip`), `email`, and `name`. Warn events also include `daysLeft` (`1`–`3`).
+You can use n8n (or your preferred workflow scheduler) to notify family members of events by sending emails, SMS, push notifications, a webhook, or even the [official Grok Bot](https://x.ai/bot/IbFZmiL_mzu0Dq-K4u633). When you call `POST /run` you will receive a JSON array containing all notify events, or empty `[]` if none. Each event has `notify` (`warning` or `shared`), `email`, and `name`. Warning events also include `daysLeft` (`1`–`3`).
 
 A family with several people can take time to process, so make sure to set your HTTP timeout to a few minutes. Any errors or warnings are printed in the Lantern log.
 
@@ -36,23 +36,23 @@ Return Example:
 
 ```json
 [
-  { "notify": "warn", "email": "ember@example.com", "name": "Ember Voss", "daysLeft": 2 },
-  { "notify": "trip", "email": "nix@example.com", "name": "Nix Thorne" }
+  { "notify": "warning", "email": "ember@example.com", "name": "Ember Voss", "daysLeft": 2 },
+  { "notify": "shared", "email": "nix@example.com", "name": "Nix Thorne" }
 ]
 ```
 
 ## Settings
 
-| Variable                   | Default     | Description                                                                                                                                                                                                                  |
-| -------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `OP_SERVICE_ACCOUNT_TOKEN` | required    | 1Password service account token with allow creation of new vaults permission only.                                                                                                                                           |
-| `RUN_TOKEN`                | required    | Shared secret. Any long random string. You must send this token when calling `POST /run`.                                                                                                                                    |
-| `VAULT_TITLE`              | `Lantern`   | Name of vaults Lantern will create.                                                                                                                                                                                          |
-| `INACTIVE_AFTER_DAYS`      | `90`        | Days without a 1Password login before a user's vault trips. Warns for the last 3 days. Valid values: 7–365.                                                                                                                  |
-| `TEST_DAY`                 | empty (off) | Test the system without waiting. It pretends every member has been idle that many days. Put a dummy item in your Lantern vault. `87` warns (3 days left). `90` trips anyone who has items. Leave it empty when you are done. |
-| `PING_URL`                 | empty (off) | Get notified if the container stops running by settings `PING_URL` to an external service like [healthchecks.io](https://healthchecks.io/), a successful run pings the URL. Leave empty to skip.                             |
-| `AUTO_RUN`                 | `true`      | Automatically call run on start and every 24 hours. Set `false` if you only use a scheduler like n8n. No notifications unless something externally calls `POST /run`.                                                        |
-| `PORT`                     | `6346`      | HTTP port to run on. `running`.                                                                                                                                                                                              |
+| Variable                   | Default     | Description                                                                                                                                                                                                                          |
+| -------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `OP_SERVICE_ACCOUNT_TOKEN` | required    | 1Password service account token with allow creation of new vaults permission only.                                                                                                                                                   |
+| `RUN_TOKEN`                | required    | Shared secret. Any long random string. You must send this token when calling `POST /run`.                                                                                                                                            |
+| `VAULT_TITLE`              | `Lantern`   | Name of vaults Lantern will create.                                                                                                                                                                                                  |
+| `INACTIVE_AFTER_DAYS`      | `90`        | Days without a 1Password login before a user's vault is shared. Warnings for the last 3 days. Valid values: 7–365.                                                                                                                   |
+| `TEST_DAY`                 | empty (off) | Test the system without waiting. It pretends every member has been idle that many days. Put a dummy item in your Lantern vault. `87` is a warning (3 days left). `90` shares anyone who has items. Leave it empty when you are done. |
+| `PING_URL`                 | empty (off) | Get notified if the container stops running by settings `PING_URL` to an external service like [healthchecks.io](https://healthchecks.io/), a successful run pings the URL. Leave empty to skip.                                     |
+| `AUTO_RUN`                 | `true`      | Automatically call run on start and every 24 hours. Set `false` if you only use a scheduler like n8n. No notifications unless something externally calls `POST /run`.                                                                |
+| `PORT`                     | `6346`      | HTTP port to run on. `running`.                                                                                                                                                                                                      |
 
 ## Dev Environment
 
@@ -65,11 +65,11 @@ npm start
 
 ## Limitations
 
-An admin can delete anyone's Lantern vault (live or already opened), add themselves or others to it, and change permissions from the 1Password dashboard. View-only grants after a trip do not stop that. Trust your admins, or do not put secrets they can view, edit, or destroy.
+An admin can delete anyone's Lantern vault (live or already opened), add themselves or others to it, and change permissions from the 1Password dashboard. View-only grants after a vault is shared do not stop that. Trust your admins, or do not put secrets they can view, edit, or destroy.
 
 ## Disclaimer
 
-Use at your own risk. This is not a will, a backup, or an official 1Password product. Test it yourself, keep your own copies of anything that matters, and do not rely on it as your only plan. You are responsible for the token, the schedule, and what happens when a vault trips.
+Use at your own risk. This is not a will, a backup, or an official 1Password product. Test it yourself, keep your own copies of anything that matters, and do not rely on it as your only plan. You are responsible for the token, the schedule, and what happens when a vault is shared.
 
 ## License
 

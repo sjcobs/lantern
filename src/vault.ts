@@ -84,7 +84,7 @@ export async function ensureVault(userId: string, map: VaultByUser) {
   return vault;
 }
 
-export async function tripVault(vault: Vault, owner: User, members: User[]) {
+export async function shareVault(vault: Vault, owner: User, members: User[]) {
   for (const member of members) {
     await grantVault(vault.id, member.id, "allow_viewing");
   }

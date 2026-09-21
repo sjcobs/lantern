@@ -1,7 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { createServer } from "node:http";
 import { User, daysSinceAuth, getUser, inactiveAfterDays, listMembers, testDay } from "./user";
-import { Vault, ensureVault, tripVault, vaultByUser } from "./vault";
+import { Vault, ensureVault, shareVault, vaultByUser } from "./vault";
 
 const port = Number(process.env.PORT) || 6346;
 if (!Number.isInteger(port) || port < 1 || port > 65535) {
@@ -46,9 +46,9 @@ function authorized(header: string | undefined) {
 
 function check(user: User, vault: Vault) {
   const daysLeft = inactiveAfterDays - daysSinceAuth(user);
-  const trip = daysLeft <= 0 && vault.items > 0;
-  const warn = daysLeft > 0 && daysLeft <= 3 && vault.items > 0;
-  return { warn, trip, daysLeft };
+  const shared = daysLeft <= 0 && vault.items > 0;
+  const warning = daysLeft > 0 && daysLeft <= 3 && vault.items > 0;
+  return { warning, shared, daysLeft };
 }
 
 let running = false;
@@ -61,19 +61,19 @@ async function run() {
   running = true;
   try {
     const events: (
-      | { notify: "warn"; email: string; name: string; daysLeft: number }
-      | { notify: "trip"; email: string; name: string }
+      | { notify: "warning"; email: string; name: string; daysLeft: number }
+      | { notify: "shared"; email: string; name: string }
     )[] = [];
     const map = await vaultByUser();
     const members = await listMembers();
     for (const member of members) {
       const vault = await ensureVault(member.id, map);
       const user = await getUser(member.id);
-      const { warn, trip, daysLeft } = check(user, vault);
-      if (warn) events.push({ notify: "warn", email: user.email, name: user.name, daysLeft });
-      if (!trip) continue;
-      await tripVault(vault, user, members);
-      events.push({ notify: "trip", email: user.email, name: user.name });
+      const { warning, shared, daysLeft } = check(user, vault);
+      if (warning) events.push({ notify: "warning", email: user.email, name: user.name, daysLeft });
+      if (!shared) continue;
+      await shareVault(vault, user, members);
+      events.push({ notify: "shared", email: user.email, name: user.name });
     }
     if (pingUrl) await ping(pingUrl);
     return events;
