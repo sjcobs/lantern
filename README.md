@@ -12,7 +12,7 @@ It works by using a 1Password service account token with **Create vaults** acces
 
 ## Instructions
 
-1. Host the Docker image on your local network. If you use Unraid, install [Lantern from Community Applications](https://ca.unraid.net/apps?q=Lantern). The image needs to always be running and **NEVER** be reverse proxied or exposed to the public.
+1. Host the Docker image on your local network. The image needs to always be running and **NEVER** be reverse proxied or exposed to the public. If you use Unraid, install [Lantern](https://ca.unraid.net/apps?q=Lantern) from Community Applications.
 2. Log in to your 1Password dashboard on the web to create a service account. Navigate to Developer → Directory → Service Account.
 3. Create a new service account named Lantern (or anything you choose). IMPORTANT: Only give your service account the `Allow creation of new vaults` permission. Do **NOT** give it access to any vaults.
 4. Save your service account token and set `OP_SERVICE_ACCOUNT_TOKEN`.
@@ -28,7 +28,7 @@ curl.exe -X POST http://localhost:6346/run -H "Authorization: Bearer <RUN_TOKEN>
 
 ## Notifications
 
-You can use n8n (or your preferred workflow scheduler) to notify family members of events by sending emails, SMS, push notifications, or even a webhook to your Grok bot. When you call `POST /run` you will receive a JSON array containing all notify events, or empty `[]` if none. Each event has `notify` (`warn` or `trip`), `email`, and `name`. Warn events also include `daysLeft` (`1`–`3`).
+You can use n8n (or your preferred workflow scheduler) to notify family members of events by sending emails, SMS, push notifications, a webhook, or even the [official Grok Bot](https://x.ai/bot/IbFZmiL_mzu0Dq-K4u633). When you call `POST /run` you will receive a JSON array containing all notify events, or empty `[]` if none. Each event has `notify` (`warn` or `trip`), `email`, and `name`. Warn events also include `daysLeft` (`1`–`3`).
 
 A family with several people can take time to process, so make sure to set your HTTP timeout to a few minutes. Any errors or warnings are printed in the Lantern log.
 
