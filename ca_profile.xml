@@ -1,7 +1,8 @@
 <CommunityApplications>
   <Profile>
-    Lantern is a 1Password family dead man's switch. It uses the official 1Password CLI and SDK. 
-    If someone goes dark, their chosen secrets are shared with family inside 1Password. 
+    Lantern is a 1Password family dead man's switch. It uses the official 1Password CLI and SDK.
+    If someone goes dark, their chosen secrets are shared with family inside 1Password.
+    Free, self-hosted, and open source. 
   </Profile>
   <Icon>https://raw.githubusercontent.com/sjcobs/lantern/main/assets/logo.png</Icon>
   <WebPage>https://github.com/sjcobs/lantern</WebPage>

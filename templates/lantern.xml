@@ -13,7 +13,7 @@
   <TemplateURL>https://raw.githubusercontent.com/sjcobs/lantern/main/templates/lantern.xml</TemplateURL>
   <ReadMe>https://raw.githubusercontent.com/sjcobs/lantern/main/README.md</ReadMe>
   <Category>Tools:Utilities</Category>
-  <ExtraSearchTerms>1password dead man switch vault family</ExtraSearchTerms>
+  <ExtraSearchTerms>1password dead man switch vault family self-hosted open source free</ExtraSearchTerms>
   <Requires>1Password family account and a service account token.</Requires>
   <Date>2026-09-20</Date>
   <License>MIT</License>
