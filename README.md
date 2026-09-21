@@ -12,7 +12,7 @@ It works by using a 1Password service account token with **Create vaults** acces
 
 ## Instructions
 
-1. Host the Docker image on your local network (Unraid template provided). The image needs to always be running and **NEVER** be reverse proxied or exposed to the public.
+1. Host the Docker image on your local network. Unraid: Community Applications available: `Lantern`. The image needs to always be running and **NEVER** be reverse proxied or exposed to the public.
 2. Log in to your 1Password dashboard on the web to create a service account. Navigate to Developer → Directory → Service Account.
 3. Create a new service account named Lantern (or anything you choose). IMPORTANT: Only give your service account the `Allow creation of new vaults` permission. Do **NOT** give it access to any vaults.
 4. Save your service account token and set `OP_SERVICE_ACCOUNT_TOKEN`.
@@ -70,6 +70,10 @@ An admin can delete anyone's Lantern vault (live or already opened), add themsel
 ## Disclaimer
 
 Use at your own risk. This is not a will, a backup, or an official 1Password product. Test it yourself, keep your own copies of anything that matters, and do not rely on it as your only plan. You are responsible for the token, the schedule, and what happens when a vault trips.
+
+## License
+
+[MIT](LICENSE).
 
 ## Support
 

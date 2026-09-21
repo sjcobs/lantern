@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>lantern</Name>
+  <Repository>ghcr.io/sjcobs/lantern:latest</Repository>
+  <Registry>https://ghcr.io/sjcobs/lantern</Registry>
+  <Network>bridge</Network>
+  <Privileged>false</Privileged>
+  <Icon>https://raw.githubusercontent.com/sjcobs/lantern/main/assets/logo.png</Icon>
+  <WebUI>http://[IP]:[PORT:6346]/</WebUI>
+  <Overview>A guiding light for when you go dark. Automatically passes your chosen secrets to family members, inside 1Password.</Overview>
+  <Support>https://github.com/sjcobs/lantern/issues</Support>
+  <Project>https://github.com/sjcobs/lantern</Project>
+  <TemplateURL>https://raw.githubusercontent.com/sjcobs/lantern/main/templates/lantern.xml</TemplateURL>
+  <ReadMe>https://raw.githubusercontent.com/sjcobs/lantern/main/README.md</ReadMe>
+  <Category>Tools:Utilities</Category>
+  <ExtraSearchTerms>1password dead man switch vault family</ExtraSearchTerms>
+  <Requires>1Password family account and a service account token.</Requires>
+  <Date>2026-09-20</Date>
+  <License>MIT</License>
+  <DonateLink>https://buymeacoffee.com/sjcobs</DonateLink>
+  <DonateText>Buy me a coffee</DonateText>
+  <Config Name="Port" Target="6346" Default="6346" Mode="tcp" Description="" Type="Port" Display="always" Required="true" Mask="false"/>
+  <Config Name="Token" Target="OP_SERVICE_ACCOUNT_TOKEN" Default="" Mode="" Description="1Password service account token with allow creation of new vaults permission only." Type="Variable" Display="always" Required="true" Mask="true"/>
+  <Config Name="Run token" Target="RUN_TOKEN" Default="" Mode="" Description="Shared secret. Any long random string. You must send this token when calling POST /run." Type="Variable" Display="always" Required="true" Mask="true"/>
+  <Config Name="Vault title" Target="VAULT_TITLE" Default="Lantern" Mode="" Description="Name of vaults Lantern will create." Type="Variable" Display="always" Required="false" Mask="false"/>
+  <Config Name="Inactive after days" Target="INACTIVE_AFTER_DAYS" Default="90" Mode="" Description="Days without a 1Password login before a user's vault trips. Warns for the last 3 days. Valid values: 7-365." Type="Variable" Display="always" Required="false" Mask="false"/>
+  <Config Name="Test day" Target="TEST_DAY" Default="" Mode="" Description="Test the system without waiting. It pretends every member has been idle that many days. Put a dummy item in your Lantern vault. 87 warns (3 days left). 90 trips anyone who has items. Leave it empty when you are done." Type="Variable" Display="always" Required="false" Mask="false"/>
+  <Config Name="Ping URL" Target="PING_URL" Default="" Mode="" Description="Get notified if the container stops running by setting PING_URL to an external service like healthchecks.io. A successful run pings the URL. Leave empty to skip." Type="Variable" Display="always" Required="false" Mask="false"/>
+  <Config Name="Auto run" Target="AUTO_RUN" Default="false" Mode="" Description="If you do not care about notifications, set AUTO_RUN to true to call run on start and once every 24 hours from the time the container starts. No scheduler needed. No notifications returned." Type="Variable" Display="always" Required="true" Mask="false"/>
+</Container>
