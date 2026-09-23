@@ -71,10 +71,6 @@ An admin can delete anyone's Lantern vault (live or already opened), add themsel
 
 Use at your own risk. This is not a will, a backup, or an official 1Password product. Test it yourself, keep your own copies of anything that matters, and do not rely on it as your only plan. You are responsible for the token, the schedule, and what happens when a vault is shared.
 
-## License
-
-[MIT](LICENSE).
-
 ## Support
 
 [![Sponsor sjcobs](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/sjcobs)
